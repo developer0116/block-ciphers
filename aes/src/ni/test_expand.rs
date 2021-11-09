@@ -1,5 +1,5 @@
-use hex_literal::hex;
 use super::utils::check;
+use hex_literal::hex;
 
 #[test]
 fn aes128_expand_test() {

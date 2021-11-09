@@ -1,14 +1,14 @@
 //! Autodetection support for hardware accelerated AES backends with fallback
 //! to the fixsliced "soft" implementation.
 
-use core::fmt;
 use crate::{soft, Block};
 use cipher::{
     consts::{U16, U24, U32},
     generic_array::GenericArray,
-    inout::{InOutBuf, InOut, InTmpOutBuf, InSrc},
-    BlockCipher, BlockSizeUser, BlockDecrypt, BlockEncrypt, KeySizeUser, KeyInit,
+    inout::{InOut, InOutBuf, InSrc, InTmpOutBuf},
+    BlockCipher, BlockDecrypt, BlockEncrypt, BlockSizeUser, KeyInit, KeySizeUser,
 };
+use core::fmt;
 use core::mem::ManuallyDrop;
 
 #[cfg(all(target_arch = "aarch64", feature = "armv8"))]
@@ -108,9 +108,17 @@ macro_rules! define_aes_impl {
                 post_fn: impl FnMut(InTmpOutBuf<'_, Block>),
             ) {
                 if self.token.get() {
-                    unsafe { self.inner.intrinsics.encrypt_blocks_with_pre(blocks, pre_fn, post_fn) }
+                    unsafe {
+                        self.inner
+                            .intrinsics
+                            .encrypt_blocks_with_pre(blocks, pre_fn, post_fn)
+                    }
                 } else {
-                    unsafe { self.inner.soft.encrypt_blocks_with_pre(blocks, pre_fn, post_fn) }
+                    unsafe {
+                        self.inner
+                            .soft
+                            .encrypt_blocks_with_pre(blocks, pre_fn, post_fn)
+                    }
                 }
             }
         }
@@ -133,9 +141,17 @@ macro_rules! define_aes_impl {
                 post_fn: impl FnMut(InTmpOutBuf<'_, Block>),
             ) {
                 if self.token.get() {
-                    unsafe { self.inner.intrinsics.decrypt_blocks_with_pre(blocks, pre_fn, post_fn) }
+                    unsafe {
+                        self.inner
+                            .intrinsics
+                            .decrypt_blocks_with_pre(blocks, pre_fn, post_fn)
+                    }
                 } else {
-                    unsafe { self.inner.soft.decrypt_blocks_with_pre(blocks, pre_fn, post_fn) }
+                    unsafe {
+                        self.inner
+                            .soft
+                            .decrypt_blocks_with_pre(blocks, pre_fn, post_fn)
+                    }
                 }
             }
         }

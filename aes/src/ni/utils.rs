@@ -37,7 +37,7 @@ pub(crate) fn load8(blocks: *const Block8) -> U128x8 {
 #[inline(always)]
 pub(crate) fn store8(blocks: *mut Block8, b: U128x8) {
     unsafe {
-        let  p = blocks as *mut Block;
+        let p = blocks as *mut Block;
         _mm_storeu_si128(p.add(0) as *mut __m128i, b[0]);
         _mm_storeu_si128(p.add(1) as *mut __m128i, b[1]);
         _mm_storeu_si128(p.add(2) as *mut __m128i, b[2]);

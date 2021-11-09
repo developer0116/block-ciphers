@@ -268,10 +268,7 @@ pub(crate) fn aes256_key_schedule(key: &GenericArray<u8, U32>) -> FixsliceKeys25
 /// Fully-fixsliced AES-128 decryption (the InvShiftRows is completely omitted).
 ///
 /// Decrypts four blocks in-place and in parallel.
-pub(crate) fn aes128_decrypt(
-    rkeys: &FixsliceKeys128,
-    blocks: &BatchBlocks,
-) -> BatchBlocks {
+pub(crate) fn aes128_decrypt(rkeys: &FixsliceKeys128, blocks: &BatchBlocks) -> BatchBlocks {
     let mut state = State::default();
 
     bitslice(&mut state, &blocks[0], &blocks[1], &blocks[2], &blocks[3]);

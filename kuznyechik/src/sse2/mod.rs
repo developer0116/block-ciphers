@@ -2,10 +2,13 @@
 
 pub use cipher;
 
-use crate::{Key, Block, consts::{P, P_INV}};
+use crate::{
+    consts::{P, P_INV},
+    Block, Key,
+};
 use cipher::{
-    inout::{InOut, InTmpOutBuf, InOutBuf, InSrc},
     generic_array::typenum::Unsigned,
+    inout::{InOut, InOutBuf, InSrc, InTmpOutBuf},
     BlockDecrypt, BlockEncrypt, KeyInit,
 };
 use core::arch::x86_64::*;
@@ -224,8 +227,10 @@ impl BlockEncrypt for Kuznyechik {
                     }
                 }
             },
-            |s, chunk| for block in chunk {
-                s.encrypt_block_inout(block);
+            |s, chunk| {
+                for block in chunk {
+                    s.encrypt_block_inout(block);
+                }
             },
         )
     }
@@ -312,8 +317,10 @@ impl BlockDecrypt for Kuznyechik {
                     }
                 }
             },
-            |s, chunk| for block in chunk {
-                s.decrypt_block_inout(block);
+            |s, chunk| {
+                for block in chunk {
+                    s.decrypt_block_inout(block);
+                }
             },
         )
     }

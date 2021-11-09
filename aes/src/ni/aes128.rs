@@ -1,7 +1,7 @@
-use core::mem;
 use super::{arch::*, utils::*};
 use crate::{Block, Block8};
 use cipher::inout::InOut;
+use core::mem;
 
 /// AES-128 round keys
 pub(super) type RoundKeys = [__m128i; 11];

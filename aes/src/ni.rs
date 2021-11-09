@@ -33,22 +33,21 @@ use core::arch::x86 as arch;
 #[cfg(target_arch = "x86_64")]
 use core::arch::x86_64 as arch;
 
-use core::fmt;
 use crate::Block;
 use cipher::{
-    consts::{U8, U16, U24, U32},
-    generic_array::{GenericArray, typenum::Unsigned},
-    inout::{InOutBuf, InOut, InTmpOutBuf, InSrc},
-    BlockCipher, BlockSizeUser, BlockDecrypt, BlockEncrypt, KeySizeUser, KeyInit,
+    consts::{U16, U24, U32, U8},
+    generic_array::{typenum::Unsigned, GenericArray},
+    inout::{InOut, InOutBuf, InSrc, InTmpOutBuf},
+    BlockCipher, BlockDecrypt, BlockEncrypt, BlockSizeUser, KeyInit, KeySizeUser,
 };
-
+use core::fmt;
 
 macro_rules! define_aes_impl {
     (
         $name: tt,
         $module: tt,
         $key_size: ty,
-        $doc: expr,
+        $doc: expr$(,)?
     ) => {
         #[doc=$doc]
         #[derive(Clone)]
@@ -73,7 +72,10 @@ macro_rules! define_aes_impl {
                     $module::expand(key)
                 };
 
-                Self { encrypt_keys, decrypt_keys, }
+                Self {
+                    encrypt_keys,
+                    decrypt_keys,
+                }
             }
         }
 
@@ -112,8 +114,10 @@ macro_rules! define_aes_impl {
                         pre_fn,
                         post_fn,
                         |keys, chunk| $module::encrypt8(keys, chunk),
-                        |keys, chunk| for block in chunk {
-                            $module::encrypt1(keys, block);
+                        |keys, chunk| {
+                            for block in chunk {
+                                $module::encrypt1(keys, block);
+                            }
                         },
                     )
                 }
@@ -155,8 +159,10 @@ macro_rules! define_aes_impl {
                         pre_fn,
                         post_fn,
                         |keys, chunk| $module::decrypt8(keys, chunk),
-                        |keys, chunk| for block in chunk {
-                            $module::decrypt1(keys, block);
+                        |keys, chunk| {
+                            for block in chunk {
+                                $module::decrypt1(keys, block);
+                            }
                         },
                     )
                 }
@@ -177,23 +183,8 @@ macro_rules! define_aes_impl {
     };
 }
 
-define_aes_impl!(
-    Aes128,
-    aes128,
-    U16,
-    "AES-128 block cipher instance",
-);
+define_aes_impl!(Aes128, aes128, U16, "AES-128 block cipher instance");
 
-define_aes_impl!(
-    Aes192,
-    aes192,
-    U24,
-    "AES-192 block cipher instance",
-);
+define_aes_impl!(Aes192, aes192, U24, "AES-192 block cipher instance");
 
-define_aes_impl!(
-    Aes256,
-    aes256,
-    U32,
-    "AES-256 block cipher instance",
-);
+define_aes_impl!(Aes256, aes256, U32, "AES-256 block cipher instance");

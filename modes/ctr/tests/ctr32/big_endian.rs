@@ -1,6 +1,6 @@
 //! Counter Mode with a 32-bit big endian counter
 
-use cipher::{KeyIvInit, StreamCipher, StreamCipherSeekCore, StreamCipherSeek};
+use cipher::{KeyIvInit, StreamCipher, StreamCipherSeek, StreamCipherSeekCore};
 use hex_literal::hex;
 
 type Aes128Ctr = ctr::Ctr32BE<aes::Aes128>;

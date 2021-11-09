@@ -1,11 +1,8 @@
 pub use cipher;
 
 use crate::consts::{P, P_INV};
-use cipher::{
-    inout::InOut,
-    BlockDecrypt, BlockEncrypt, KeyInit,
-};
-use crate::{Key, Block};
+use crate::{Block, Key};
+use cipher::{inout::InOut, BlockDecrypt, BlockEncrypt, KeyInit};
 
 mod consts;
 

@@ -17,7 +17,7 @@
 
 use crate::Block;
 use cipher::{
-    consts::{U2, U16, U24, U32},
+    consts::{U16, U2, U24, U32},
     generic_array::GenericArray,
 };
 use core::convert::TryInto;

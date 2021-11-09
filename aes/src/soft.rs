@@ -12,15 +12,15 @@
 #[cfg_attr(target_pointer_width = "64", path = "soft/fixslice64.rs")]
 pub(crate) mod fixslice;
 
-use core::fmt;
 use crate::Block;
 use cipher::{
     consts::{U16, U24, U32},
     generic_array::GenericArray,
-    inout::{InOut, InOutBuf, InTmpOutBuf, InSrc},
-    BlockSizeUser, BlockCipher, BlockDecrypt, BlockEncrypt, KeyInit, KeySizeUser,
+    inout::{InOut, InOutBuf, InSrc, InTmpOutBuf},
+    BlockCipher, BlockDecrypt, BlockEncrypt, BlockSizeUser, KeyInit, KeySizeUser,
 };
-use fixslice::{FixsliceKeys128, FixsliceKeys192, FixsliceKeys256, FixsliceBlocks, BatchBlocks};
+use core::fmt;
+use fixslice::{BatchBlocks, FixsliceBlocks, FixsliceKeys128, FixsliceKeys192, FixsliceKeys256};
 
 macro_rules! define_aes_impl {
     (

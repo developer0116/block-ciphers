@@ -10,11 +10,11 @@
 #![allow(clippy::needless_range_loop, clippy::transmute_ptr_to_ptr)]
 
 pub use cipher;
-use core::fmt;
 use cipher::{
     consts::{U16, U32},
-    KeySizeUser, BlockSizeUser, BlockCipher,
+    BlockCipher, BlockSizeUser, KeySizeUser,
 };
+use core::fmt;
 
 #[macro_use]
 mod macros;

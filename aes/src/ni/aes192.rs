@@ -1,7 +1,7 @@
-use core::{mem, ptr};
 use super::{arch::*, utils::*};
 use crate::{Block, Block8};
 use cipher::inout::InOut;
+use core::{mem, ptr};
 
 /// AES-192 round keys
 pub(super) type RoundKeys = [__m128i; 13];

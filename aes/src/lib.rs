@@ -136,8 +136,11 @@ cfg_if! {
     }
 }
 
-pub use cipher::{self, BlockCipher, BlockDecrypt, BlockEncrypt, KeyInit, Key};
-use cipher::generic_array::{GenericArray, typenum::{U16, U8}};
+use cipher::generic_array::{
+    typenum::{U16, U8},
+    GenericArray,
+};
+pub use cipher::{self, BlockCipher, BlockDecrypt, BlockEncrypt, Key, KeyInit};
 
 /// Size of an AES block (128-bits; 16-bytes)
 pub const BLOCK_SIZE: usize = 16;
