@@ -36,13 +36,12 @@ jobs:
           target: ${{ matrix.target }}
           profile: minimal
           override: true
-      - run: cargo check --features compact,ctr,force-soft
+      - run: cargo check --features compact,force-soft
       - run: cargo build --release --target ${{ matrix.target }}
       - run: cargo build --release --target ${{ matrix.target }} --features compact
-      - run: cargo build --release --target ${{ matrix.target }} --features ctr
       - run: cargo build --release --target ${{ matrix.target }} --features force-soft
       - run: cargo build --release --target ${{ matrix.target }} --features hazmat
-      - run: cargo build --release --target ${{ matrix.target }} --features compact,ctr,force-soft
+      - run: cargo build --release --target ${{ matrix.target }} --features compact,force-soft
 
   # Tests for the AES-NI backend
   aesni:
@@ -78,7 +77,6 @@ jobs:
       - run: ${{ matrix.deps }}
       - run: cargo test --release --target ${{ matrix.target }}
       - run: cargo test --release --target ${{ matrix.target }} --features compact
-      - run: cargo test --release --target ${{ matrix.target }} --features ctr
       - run: cargo test --release --target ${{ matrix.target }} --features force-soft
       - run: cargo test --release --target ${{ matrix.target }} --features hazmat
       - run: cargo test --release --target ${{ matrix.target }} --all-features
@@ -113,7 +111,6 @@ jobs:
       - run: ${{ matrix.deps }}
       - run: cargo test --release --target ${{ matrix.target }}
       - run: cargo test --release --target ${{ matrix.target }} --features compact
-      - run: cargo test --release --target ${{ matrix.target }} --features ctr
       - run: cargo test --release --target ${{ matrix.target }} --features hazmat
       - run: cargo test --release --target ${{ matrix.target }} --all-features
 
@@ -147,8 +144,7 @@ jobs:
       - run: ${{ matrix.deps }}
       - run: cargo test --release --target ${{ matrix.target }} --features force-soft
       - run: cargo test --release --target ${{ matrix.target }} --features force-soft,compact
-      - run: cargo test --release --target ${{ matrix.target }} --features force-soft,ctr
-      - run: cargo test --release --target ${{ matrix.target }} --features force-soft,compact,ctr
+
 
   # Cross-compiled tests
   cross:
@@ -179,10 +175,9 @@ jobs:
       - run: cargo install cross
       - run: cross test --release --target ${{ matrix.target }}
       - run: cross test --release --target ${{ matrix.target }} --features compact
-      - run: cross test --release --target ${{ matrix.target }} --features ctr
       - run: cross test --release --target ${{ matrix.target }} --features force-soft
       - run: cross test --release --target ${{ matrix.target }} --features hazmat
-      - run: cross test --release --target ${{ matrix.target }} --features compact,ctr,force-soft,hazmat
+      - run: cross test --release --target ${{ matrix.target }} --features compact,force-soft,hazmat
 
   # ARMv8 cross-compiled tests for AES intrinsics (nightly-only)
   armv8:
@@ -204,7 +199,6 @@ jobs:
       - run: cargo install cross
       - run: cross test --release --target ${{ matrix.target }} --features armv8
       - run: cross test --release --target ${{ matrix.target }} --features armv8,compact
-      - run: cross test --release --target ${{ matrix.target }} --features armv8,ctr
       - run: cross test --release --target ${{ matrix.target }} --features armv8,force-soft
       - run: cross test --release --target ${{ matrix.target }} --features armv8,hazmat
       - run: cross test --release --target ${{ matrix.target }} --all-features
@@ -219,4 +213,4 @@ jobs:
           components: clippy
           override: true
           profile: minimal
-      - run: cargo clippy --features compact,ctr,hazmat -- -D warnings
+      - run: cargo clippy --features compact,hazmat -- -D warnings

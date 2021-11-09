@@ -12,12 +12,6 @@
 #[cfg_attr(target_pointer_width = "64", path = "soft/fixslice64.rs")]
 pub(crate) mod fixslice;
 
-#[cfg(feature = "ctr")]
-mod ctr;
-
-#[cfg(feature = "ctr")]
-pub use self::ctr::{Aes128Ctr, Aes192Ctr, Aes256Ctr};
-
 use core::fmt;
 use crate::Block;
 use cipher::{

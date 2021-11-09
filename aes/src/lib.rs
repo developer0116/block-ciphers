@@ -106,7 +106,6 @@
     all(feature = "armv8", target_arch = "aarch64"),
     feature(stdsimd, aarch64_target_feature)
 )]
-#![cfg_attr(docsrs, feature(doc_cfg))]
 #![doc(
     html_logo_url = "https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg",
     html_favicon_url = "https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg"
@@ -125,9 +124,6 @@ cfg_if! {
         mod armv8;
         mod autodetect;
         pub use autodetect::{Aes128, Aes192, Aes256};
-
-        #[cfg(feature = "ctr")]
-        pub use autodetect::ctr::{Aes128Ctr, Aes192Ctr, Aes256Ctr};
     } else if #[cfg(all(
         any(target_arch = "x86", target_arch = "x86_64"),
         not(feature = "force-soft")
@@ -135,14 +131,8 @@ cfg_if! {
         mod autodetect;
         mod ni;
         pub use autodetect::{Aes128, Aes192, Aes256};
-
-        #[cfg(feature = "ctr")]
-        pub use autodetect::ctr::{Aes128Ctr, Aes192Ctr, Aes256Ctr};
     } else {
         pub use soft::{Aes128, Aes192, Aes256};
-
-        #[cfg(feature = "ctr")]
-        pub use soft::{Aes128Ctr, Aes192Ctr, Aes256Ctr};
     }
 }
 

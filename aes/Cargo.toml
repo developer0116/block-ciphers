@@ -17,7 +17,6 @@ categories = ["cryptography", "no-std"]
 [dependencies]
 cfg-if = "1"
 cipher = "0.4"
-ctr = { version = "0.8", optional = true }
 
 [dev-dependencies]
 cipher = { version = "0.4", features = ["dev"] }
@@ -31,7 +30,3 @@ armv8      = [] # Enable ARMv8 AES intrinsics (nightly-only)
 compact    = [] # Reduce code size at the cost of slower performance
 force-soft = [] # Disable support for AES hardware intrinsics
 hazmat     = [] # Expose cryptographically hazardous APIs
-
-[package.metadata.docs.rs]
-features = ["ctr"]
-rustdoc-args = ["--cfg", "docsrs"]

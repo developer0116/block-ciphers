@@ -3,12 +3,6 @@
 //! Ciphers functionality is accessed using `BlockCipher` trait from the
 //! [`cipher`](https://docs.rs/cipher) crate.
 //!
-//! # CTR mode
-//! In addition to core block cipher functionality this crate provides optimized
-//! CTR mode implementation. This functionality requires additional `ssse3`
-//! target feature and feature-gated behind `ctr` feature flag, which is enabled
-//! by default.
-//!
 //! # Vulnerability
 //! Lazy FP state restory vulnerability can allow local process to leak content
 //! of the FPU register, in which round keys are stored. This vulnerability
@@ -30,9 +24,6 @@ mod aes256;
 
 #[cfg(test)]
 mod test_expand;
-
-#[cfg(feature = "ctr")]
-mod ctr;
 
 #[cfg(feature = "hazmat")]
 pub(crate) mod hazmat;
@@ -206,6 +197,3 @@ define_aes_impl!(
     U32,
     "AES-256 block cipher instance",
 );
-
-#[cfg(feature = "ctr")]
-pub use self::ctr::{Aes128Ctr, Aes192Ctr, Aes256Ctr};
