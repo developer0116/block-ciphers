@@ -76,6 +76,7 @@ impl<C: BlockEncryptMut + BlockCipher> IvState for Ofb<C> {
 }
 
 impl<C: BlockEncryptMut + BlockCipher> BlockEncryptMut for Ofb<C> {
+    #[inline]
     fn encrypt_block_inout_mut(&mut self, block: InOut<'_, Block<Self>>) {
         self.cipher.encrypt_block_mut(&mut self.iv);
         xor_set(&self.iv, block);
@@ -83,6 +84,7 @@ impl<C: BlockEncryptMut + BlockCipher> BlockEncryptMut for Ofb<C> {
 }
 
 impl<C: BlockEncryptMut + BlockCipher> BlockDecryptMut for Ofb<C> {
+    #[inline]
     fn decrypt_block_inout_mut(&mut self, block: InOut<'_, Block<Self>>) {
         self.cipher.encrypt_block_mut(&mut self.iv);
         xor_set(&self.iv, block);
