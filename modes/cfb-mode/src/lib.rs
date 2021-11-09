@@ -13,22 +13,18 @@
 use cipher::{
     crypto_common::{InnerUser, IvSizeUser},
     inout::{InOut, InOutBuf, InSrc, InTmpOutBuf},
-    AsyncStreamCipherCore, Block, BlockCipher, BlockDecryptMut, BlockEncryptMut, BlockSizeUser,
-    InnerIvInit, Iv, IvState, StreamCipherCoreWrapper,
+    AsyncStreamCipher, Block, BlockCipher, BlockDecryptMut, BlockEncryptMut, BlockSizeUser,
+    InnerIvInit, Iv, IvState,
 };
-
-/// Wrapped CFB which handles block buffering and provides slice-based
-/// `encrypt` and `decrypt` methods.
-pub type Cfb<C> = StreamCipherCoreWrapper<CfbCore<C>>;
 
 /// CFB mode core type.
 #[derive(Clone)]
-pub struct CfbCore<C: BlockEncryptMut + BlockCipher> {
+pub struct Cfb<C: BlockEncryptMut + BlockCipher> {
     cipher: C,
     iv: Block<C>,
 }
 
-impl<C: BlockEncryptMut + BlockCipher> BlockEncryptMut for CfbCore<C> {
+impl<C: BlockEncryptMut + BlockCipher> BlockEncryptMut for Cfb<C> {
     fn encrypt_block_inout_mut(&mut self, block: InOut<'_, Block<Self>>) {
         self.cipher.encrypt_block_mut(&mut self.iv);
         xor(&mut self.iv, block.get_in());
@@ -36,7 +32,7 @@ impl<C: BlockEncryptMut + BlockCipher> BlockEncryptMut for CfbCore<C> {
     }
 }
 
-impl<C: BlockEncryptMut + BlockCipher> BlockDecryptMut for CfbCore<C> {
+impl<C: BlockEncryptMut + BlockCipher> BlockDecryptMut for Cfb<C> {
     fn decrypt_block_inout_mut(&mut self, block: InOut<'_, Block<Self>>) {
         let mut t = Default::default();
         self.cipher.encrypt_block_b2b_mut(&self.iv, &mut t);
@@ -68,21 +64,21 @@ impl<C: BlockEncryptMut + BlockCipher> BlockDecryptMut for CfbCore<C> {
     }
 }
 
-impl<C: BlockEncryptMut + BlockCipher> BlockSizeUser for CfbCore<C> {
+impl<C: BlockEncryptMut + BlockCipher> BlockSizeUser for Cfb<C> {
     type BlockSize = C::BlockSize;
 }
 
-impl<C: BlockEncryptMut + BlockCipher> AsyncStreamCipherCore for CfbCore<C> {}
+impl<C: BlockEncryptMut + BlockCipher> AsyncStreamCipher for Cfb<C> {}
 
-impl<C: BlockEncryptMut + BlockCipher> InnerUser for CfbCore<C> {
+impl<C: BlockEncryptMut + BlockCipher> InnerUser for Cfb<C> {
     type Inner = C;
 }
 
-impl<C: BlockEncryptMut + BlockCipher> IvSizeUser for CfbCore<C> {
+impl<C: BlockEncryptMut + BlockCipher> IvSizeUser for Cfb<C> {
     type IvSize = C::BlockSize;
 }
 
-impl<C: BlockEncryptMut + BlockCipher> InnerIvInit for CfbCore<C> {
+impl<C: BlockEncryptMut + BlockCipher> InnerIvInit for Cfb<C> {
     #[inline]
     fn inner_iv_init(cipher: C, iv: &Iv<Self>) -> Self {
         Self {
@@ -92,7 +88,7 @@ impl<C: BlockEncryptMut + BlockCipher> InnerIvInit for CfbCore<C> {
     }
 }
 
-impl<C: BlockEncryptMut + BlockCipher> IvState for CfbCore<C> {
+impl<C: BlockEncryptMut + BlockCipher> IvState for Cfb<C> {
     fn iv_state(&self) -> Iv<Self> {
         self.iv.clone()
     }

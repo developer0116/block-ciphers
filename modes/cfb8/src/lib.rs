@@ -13,8 +13,8 @@
 use cipher::{
     crypto_common::{InnerUser, IvSizeUser},
     generic_array::typenum::U1,
-    inout::{InOut, InOutBuf},
-    AsyncStreamCipher, AsyncStreamCipherCore, Block, BlockCipher, BlockDecryptMut, BlockEncryptMut,
+    inout::InOut,
+    AsyncStreamCipher, Block, BlockCipher, BlockDecryptMut, BlockEncryptMut,
     BlockSizeUser, InnerIvInit, Iv, IvState,
 };
 
@@ -56,31 +56,11 @@ impl<C: BlockEncryptMut + BlockCipher> BlockDecryptMut for Cfb8<C> {
     }
 }
 
-impl<C: BlockEncryptMut + BlockCipher> AsyncStreamCipher for Cfb8<C> {
-    #[inline]
-    fn encrypt_inout(&mut self, data: InOutBuf<'_, u8>) {
-        let (blocks, tail) = data.into_blocks();
-        assert_eq!(tail.len(), 0);
-        for block in blocks {
-            self.encrypt_block_inout_mut(block);
-        }
-    }
-
-    #[inline]
-    fn decrypt_inout(&mut self, data: InOutBuf<'_, u8>) {
-        let (blocks, tail) = data.into_blocks();
-        assert_eq!(tail.len(), 0);
-        for block in blocks {
-            self.decrypt_block_inout_mut(block);
-        }
-    }
-}
+impl<C: BlockEncryptMut + BlockCipher> AsyncStreamCipher for Cfb8<C> {}
 
 impl<C: BlockEncryptMut + BlockCipher> BlockSizeUser for Cfb8<C> {
     type BlockSize = U1;
 }
-
-impl<C: BlockEncryptMut + BlockCipher> AsyncStreamCipherCore for Cfb8<C> {}
 
 impl<C: BlockEncryptMut + BlockCipher> InnerUser for Cfb8<C> {
     type Inner = C;
