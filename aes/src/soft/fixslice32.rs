@@ -1381,7 +1381,7 @@ pub(crate) mod hazmat {
         bitslice, inv_bitslice, inv_mix_columns_0, inv_shift_rows_1, inv_sub_bytes, mix_columns_0,
         shift_rows_1, sub_bytes, sub_bytes_nots, State,
     };
-    use crate::{Block, ParBlocks};
+    use crate::{Block, Block8};
 
     /// XOR the `src` block into the `dst` block in-place.
     fn xor_in_place(dst: &mut Block, src: &Block) {
@@ -1399,8 +1399,7 @@ pub(crate) mod hazmat {
 
     /// Perform an inverse bitslice operation, extracting a single block.
     fn inv_bitslice_block(block: &mut Block, state: &State) {
-        let mut out = [Block::default(); 2];
-        inv_bitslice(state, &mut out);
+        let out = inv_bitslice(state);
         block.copy_from_slice(&out[0]);
     }
 
@@ -1418,7 +1417,7 @@ pub(crate) mod hazmat {
 
     /// AES cipher (encrypt) round function: parallel version.
     #[inline]
-    pub(crate) fn cipher_round_par(blocks: &mut ParBlocks, round_keys: &ParBlocks) {
+    pub(crate) fn cipher_round_par(blocks: &mut Block8, round_keys: &Block8) {
         for (chunk, keys) in blocks.chunks_exact_mut(2).zip(round_keys.chunks_exact(2)) {
             let mut state = State::default();
             bitslice(&mut state, &chunk[0], &chunk[1]);
@@ -1426,9 +1425,10 @@ pub(crate) mod hazmat {
             sub_bytes_nots(&mut state);
             shift_rows_1(&mut state);
             mix_columns_0(&mut state);
-            inv_bitslice(&state, chunk);
+            let res = inv_bitslice(&state);
 
             for i in 0..2 {
+                chunk[i] = res[i];
                 xor_in_place(&mut chunk[i], &keys[i]);
             }
         }
@@ -1448,7 +1448,7 @@ pub(crate) mod hazmat {
 
     /// AES cipher (encrypt) round function: parallel version.
     #[inline]
-    pub(crate) fn equiv_inv_cipher_round_par(blocks: &mut ParBlocks, round_keys: &ParBlocks) {
+    pub(crate) fn equiv_inv_cipher_round_par(blocks: &mut Block8, round_keys: &Block8) {
         for (chunk, keys) in blocks.chunks_exact_mut(2).zip(round_keys.chunks_exact(2)) {
             let mut state = State::default();
             bitslice(&mut state, &chunk[0], &chunk[1]);
@@ -1456,9 +1456,10 @@ pub(crate) mod hazmat {
             inv_sub_bytes(&mut state);
             inv_shift_rows_1(&mut state);
             inv_mix_columns_0(&mut state);
-            inv_bitslice(&state, chunk);
+            let res = inv_bitslice(&state);
 
             for i in 0..2 {
+                chunk[i] = res[i];
                 xor_in_place(&mut chunk[i], &keys[i]);
             }
         }
