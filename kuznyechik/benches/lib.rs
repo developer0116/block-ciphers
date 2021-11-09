@@ -1,3 +1,8 @@
 #![feature(test)]
+extern crate test;
 
-cipher::block_cipher_bench!(kuznyechik::Kuznyechik, 32);
+use cipher::{block_decryptor_bench, block_encryptor_bench};
+use kuznyechik::Kuznyechik;
+
+block_encryptor_bench!(Kuznyechik, kuznyechik_encrypt_block, kuznyechik_encrypt_blocks);
+block_decryptor_bench!(Kuznyechik, kuznyechik_decrypt_block, kuznyechik_decrypt_blocks);
