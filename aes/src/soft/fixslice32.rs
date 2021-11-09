@@ -296,7 +296,7 @@ pub(crate) fn aes128_decrypt(rkeys: &FixsliceKeys128, blocks: &BatchBlocks) -> B
 
     add_round_key(&mut state, &rkeys[..8]);
 
-    inv_bitslice(&state, blocks)
+    inv_bitslice(&state)
 }
 
 /// Fully-fixsliced AES-128 encryption (the ShiftRows is completely omitted).
@@ -352,7 +352,7 @@ pub(crate) fn aes128_encrypt(rkeys: &FixsliceKeys128, blocks: &BatchBlocks) -> B
     sub_bytes(&mut state);
     add_round_key(&mut state, &rkeys[80..]);
 
-    inv_bitslice(&state, blocks)
+    inv_bitslice(&state)
 }
 
 /// Fully-fixsliced AES-192 decryption (the InvShiftRows is completely omitted).
@@ -402,7 +402,7 @@ pub(crate) fn aes192_decrypt(rkeys: &FixsliceKeys192, blocks: &BatchBlocks) -> B
 
     add_round_key(&mut state, &rkeys[..8]);
 
-    inv_bitslice(&state, blocks)
+    inv_bitslice(&state)
 }
 
 /// Fully-fixsliced AES-192 encryption (the ShiftRows is completely omitted).
@@ -452,7 +452,7 @@ pub(crate) fn aes192_encrypt(rkeys: &FixsliceKeys192, blocks: &BatchBlocks) -> B
     sub_bytes(&mut state);
     add_round_key(&mut state, &rkeys[96..]);
 
-    inv_bitslice(&state, blocks)
+    inv_bitslice(&state)
 }
 
 /// Fully-fixsliced AES-256 decryption (the InvShiftRows is completely omitted).
@@ -508,7 +508,7 @@ pub(crate) fn aes256_decrypt(rkeys: &FixsliceKeys256, blocks: &BatchBlocks) -> B
 
     add_round_key(&mut state, &rkeys[..8]);
 
-    inv_bitslice(&state, blocks)
+    inv_bitslice(&state)
 }
 
 /// Fully-fixsliced AES-256 encryption (the ShiftRows is completely omitted).
@@ -564,7 +564,7 @@ pub(crate) fn aes256_encrypt(rkeys: &FixsliceKeys256, blocks: &BatchBlocks) -> B
     sub_bytes(&mut state);
     add_round_key(&mut state, &rkeys[112..]);
 
-    inv_bitslice(&state, blocks)
+    inv_bitslice(&state)
 }
 
 /// Note that the 4 bitwise NOT (^= 0xffffffff) are accounted for here so that it is a true
