@@ -1,16 +1,16 @@
-name: block-modes
+name: pcbc
 
 on:
   pull_request:
     paths:
-      - "block-modes/**"
+      - "modes/pcbc/**"
       - "Cargo.*"
   push:
     branches: master
 
 defaults:
   run:
-    working-directory: block-modes
+    working-directory: modes/pcbc
 
 env:
   CARGO_INCREMENTAL: 0
@@ -51,6 +51,5 @@ jobs:
         toolchain: ${{ matrix.rust }}
         override: true
         profile: minimal
-    - run: cargo check
     - run: cargo test
     - run: cargo test --all-features
