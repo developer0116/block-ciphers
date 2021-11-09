@@ -215,11 +215,11 @@ jobs:
           wget -O /tmp/binaries.tar.gz $URL
           tar -C /tmp -xzf /tmp/binaries.tar.gz
           mv /tmp/cross ~/.cargo/bin
-      - run: cross --package aes test --release --target ${{ matrix.target }} --features armv8
-      - run: cross --package aes test --release --target ${{ matrix.target }} --features armv8,compact
-      - run: cross --package aes test --release --target ${{ matrix.target }} --features armv8,force-soft
-      - run: cross --package aes test --release --target ${{ matrix.target }} --features armv8,hazmat
-      - run: cross --package aes test --release --target ${{ matrix.target }} --all-features
+      - run: cross test --package aes --release --target ${{ matrix.target }} --features armv8
+      - run: cross test --package aes --release --target ${{ matrix.target }} --features armv8,compact
+      - run: cross test --package aes --release --target ${{ matrix.target }} --features armv8,force-soft
+      - run: cross test --package aes --release --target ${{ matrix.target }} --features armv8,hazmat
+      - run: cross test --package aes --release --target ${{ matrix.target }} --all-features
 
   clippy:
     runs-on: ubuntu-latest
