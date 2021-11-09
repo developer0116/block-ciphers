@@ -26,7 +26,7 @@ where
 
     #[inline]
     fn remaining(&self) -> Option<usize> {
-        (u128::MAX - self.0).try_into().ok()
+        (core::u128::MAX - self.0).try_into().ok()
     }
 
     #[inline]
@@ -89,7 +89,7 @@ where
 
     #[inline]
     fn remaining(&self) -> Option<usize> {
-        (u128::MAX - self.0).try_into().ok()
+        (core::u128::MAX - self.0).try_into().ok()
     }
 
     #[inline]
