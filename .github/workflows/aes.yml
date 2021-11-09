@@ -163,6 +163,10 @@ jobs:
           - target: powerpc-unknown-linux-gnu
             rust: stable
     runs-on: ubuntu-latest
+    # Cross mounts only current package, i.e. by default it ignores workspace's Cargo.toml
+    defaults:
+      run:
+        working-directory: .
     steps:
       - uses: actions/checkout@v1
       - run: ${{ matrix.deps }}
@@ -172,12 +176,17 @@ jobs:
           target: ${{ matrix.target }}
           profile: minimal
           override: true
-      - run: cargo install cross
-      - run: cross test --release --target ${{ matrix.target }}
-      - run: cross test --release --target ${{ matrix.target }} --features compact
-      - run: cross test --release --target ${{ matrix.target }} --features force-soft
-      - run: cross test --release --target ${{ matrix.target }} --features hazmat
-      - run: cross test --release --target ${{ matrix.target }} --features compact,force-soft,hazmat
+      - name: Install pre-compiled cross
+        run: |
+          export URL=$(curl -s https://api.github.com/repos/rust-embedded/cross/releases/latest | jq -r '.assets[] | select(.name | contains("x86_64-unknown-linux-gnu.tar.gz")) | .browser_download_url')
+          wget -O /tmp/binaries.tar.gz $URL
+          tar -C /tmp -xzf /tmp/binaries.tar.gz
+          mv /tmp/cross ~/.cargo/bin
+      - run: cross test --package aes --release --target ${{ matrix.target }}
+      - run: cross test --package aes --release --target ${{ matrix.target }} --features compact
+      - run: cross test --package aes --release --target ${{ matrix.target }} --features force-soft
+      - run: cross test --package aes --release --target ${{ matrix.target }} --features hazmat
+      - run: cross test --package aes --release --target ${{ matrix.target }} --features compact,force-soft,hazmat
 
   # ARMv8 cross-compiled tests for AES intrinsics (nightly-only)
   armv8:
@@ -187,6 +196,10 @@ jobs:
           - target: aarch64-unknown-linux-gnu
             rust: nightly
     runs-on: ubuntu-latest
+    # Cross mounts only current package, i.e. by default it ignores workspace's Cargo.toml
+    defaults:
+      run:
+        working-directory: .
     steps:
       - uses: actions/checkout@v1
       - run: ${{ matrix.deps }}
@@ -196,12 +209,17 @@ jobs:
           target: ${{ matrix.target }}
           profile: minimal
           override: true
-      - run: cargo install cross
-      - run: cross test --release --target ${{ matrix.target }} --features armv8
-      - run: cross test --release --target ${{ matrix.target }} --features armv8,compact
-      - run: cross test --release --target ${{ matrix.target }} --features armv8,force-soft
-      - run: cross test --release --target ${{ matrix.target }} --features armv8,hazmat
-      - run: cross test --release --target ${{ matrix.target }} --all-features
+      - name: Install pre-compiled cross
+        run: |
+          export URL=$(curl -s https://api.github.com/repos/rust-embedded/cross/releases/latest | jq -r '.assets[] | select(.name | contains("x86_64-unknown-linux-gnu.tar.gz")) | .browser_download_url')
+          wget -O /tmp/binaries.tar.gz $URL
+          tar -C /tmp -xzf /tmp/binaries.tar.gz
+          mv /tmp/cross ~/.cargo/bin
+      - run: cross --package aes test --release --target ${{ matrix.target }} --features armv8
+      - run: cross --package aes test --release --target ${{ matrix.target }} --features armv8,compact
+      - run: cross --package aes test --release --target ${{ matrix.target }} --features armv8,force-soft
+      - run: cross --package aes test --release --target ${{ matrix.target }} --features armv8,hazmat
+      - run: cross --package aes test --release --target ${{ matrix.target }} --all-features
 
   clippy:
     runs-on: ubuntu-latest
