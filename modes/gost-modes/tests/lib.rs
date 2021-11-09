@@ -2,10 +2,13 @@
 //! https://tc26.ru/standard/gost/GOST_R_3413-2015.pdf
 
 use gost_modes::{
-    cipher::{KeyInit, BlockDecrypt, BlockEncrypt, BlockDecryptMut, BlockEncryptMut, StreamCipher, AsyncStreamCipher, KeyIvInit},
+    cipher::{
+        AsyncStreamCipher, BlockDecrypt, BlockDecryptMut, BlockEncrypt, BlockEncryptMut, KeyInit,
+        KeyIvInit, StreamCipher,
+    },
     consts::{U14, U16, U2, U3, U32, U5},
-    generic_array::{GenericArray, ArrayLength},
-    Ofb, Cfb, Ctr64, Ctr128, CbcEncrypt, CbcDecrypt,
+    generic_array::{ArrayLength, GenericArray},
+    CbcDecrypt, CbcEncrypt, Cfb, Ctr128, Ctr64, Ofb,
 };
 use hex_literal::hex;
 use kuznyechik::Kuznyechik;
