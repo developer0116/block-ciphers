@@ -113,7 +113,7 @@ impl KeyInit for Kuznyechik {
 impl BlockEncrypt for Kuznyechik {
     #[inline]
     fn encrypt_block_inout(&self, block: InOut<'_, Block>) {
-        let mut b = block.get_in().clone();
+        let mut b = *block.get_in();
         unroll9! {
             i, { lsx(&mut b, &self.keys[i]) ; }
         }
@@ -125,7 +125,7 @@ impl BlockEncrypt for Kuznyechik {
 impl BlockDecrypt for Kuznyechik {
     #[inline]
     fn decrypt_block_inout(&self, block: InOut<'_, Block>) {
-        let mut b = block.get_in().clone();
+        let mut b = *block.get_in();
         unroll9! {
             i, { lsx_inv(&mut b, &self.keys[9 - i]) ; }
         }
