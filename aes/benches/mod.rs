@@ -11,7 +11,7 @@ block_encryptor_bench!(aes::Aes256, aes256_encrypt_block, aes256_encrypt_blocks)
 block_decryptor_bench!(aes::Aes256, aes256_decrypt_block, aes256_decrypt_blocks);
 
 #[bench]
-pub fn aes128_new(bh: &mut test::Bencher) {
+fn aes128_new(bh: &mut test::Bencher) {
     bh.iter(|| {
         let key = test::black_box(Default::default());
         let cipher = aes::Aes128::new(&key);
@@ -20,7 +20,7 @@ pub fn aes128_new(bh: &mut test::Bencher) {
 }
 
 #[bench]
-pub fn aes192_new(bh: &mut test::Bencher) {
+fn aes192_new(bh: &mut test::Bencher) {
     bh.iter(|| {
         let key = test::black_box(Default::default());
         let cipher = aes::Aes192::new(&key);
@@ -29,7 +29,7 @@ pub fn aes192_new(bh: &mut test::Bencher) {
 }
 
 #[bench]
-pub fn aes256_new(bh: &mut test::Bencher) {
+fn aes256_new(bh: &mut test::Bencher) {
     bh.iter(|| {
         let key = test::black_box(Default::default());
         let cipher = aes::Aes256::new(&key);
