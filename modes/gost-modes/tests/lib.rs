@@ -2,15 +2,14 @@
 //! https://tc26.ru/standard/gost/GOST_R_3413-2015.pdf
 
 use gost_modes::{
-    block_padding::ZeroPadding,
+    cipher::{KeyInit, BlockDecrypt, BlockEncrypt, BlockDecryptMut, BlockEncryptMut, StreamCipher, AsyncStreamCipher, KeyIvInit},
     consts::{U14, U16, U2, U3, U32, U5},
-    generic_array::GenericArray,
-    AsyncStreamCipher, BlockMode, Ecb, GostCbc, GostCfb, GostCtr128, GostCtr64, GostOfb, NewCipher,
-    StreamCipher,
+    generic_array::{GenericArray, ArrayLength},
+    Ofb, Cfb, Ctr64, Ctr128, CbcEncrypt, CbcDecrypt,
 };
 use hex_literal::hex;
 use kuznyechik::Kuznyechik;
-use magma::{cipher::NewBlockCipher, Magma};
+use magma::Magma;
 
 fn test_stream_cipher(cipher: impl StreamCipher + Clone, pt: &[u8], ct: &[u8]) {
     let mut buf = pt.to_vec();
@@ -36,25 +35,25 @@ fn test_stream_cipher(cipher: impl StreamCipher + Clone, pt: &[u8], ct: &[u8]) {
 }
 
 fn test_async_stream_cipher(cipher: impl AsyncStreamCipher + Clone, pt: &[u8], ct: &[u8]) {
-    let mut buf = pt.to_vec();
-    cipher.clone().encrypt(&mut buf);
-    assert_eq!(buf, &ct[..]);
-    cipher.clone().decrypt(&mut buf);
-    assert_eq!(buf, &pt[..]);
+    assert_eq!(pt.len(), ct.len());
+    for n in 1..pt.len() {
+        let mut buf = pt[..n].to_vec();
+        cipher.clone().encrypt(&mut buf);
+        assert_eq!(buf, &ct[..n]);
 
-    for i in 1..32 {
-        let mut c = cipher.clone();
-        let mut buf = pt.to_vec();
-        for chunk in buf.chunks_mut(i) {
-            c.encrypt(chunk);
-        }
-        assert_eq!(buf, &ct[..]);
+        cipher.clone().decrypt(&mut buf);
+        assert_eq!(buf, &pt[..n]);
+    }
+}
 
-        let mut c = cipher.clone();
-        for chunk in buf.chunks_mut(i) {
-            c.decrypt(chunk);
-        }
-        assert_eq!(buf, &pt[..]);
+fn as_blocks_mut<BS: ArrayLength<u8>>(buf: &mut [u8]) -> &mut [GenericArray<u8, BS>] {
+    let bs = BS::USIZE;
+    assert_eq!(buf.len() % bs, 0);
+    unsafe {
+        core::slice::from_raw_parts_mut(
+            buf.as_mut_ptr() as *mut GenericArray<u8, BS>,
+            buf.len() / bs,
+        )
     }
 }
 
@@ -109,30 +108,35 @@ fn kuznyechik_modes() {
         4ffebecd4e922de6c75bd9dd44fbf4d1
     ");
 
-    let c = GostOfb::<Kuznyechik, U2>::new(&key, &iv);
+    let c = Ofb::<Kuznyechik, U2>::new(&key, &iv);
     test_stream_cipher(c, &pt, &ofb_ct);
 
-    let c = GostCfb::<Kuznyechik, U32>::new(&key, &iv);
+    let c = Cfb::<Kuznyechik, U32>::new(&key, &iv);
     test_async_stream_cipher(c, &pt, &cfb_ct);
 
-    let c = GostCtr128::<Kuznyechik>::new(&key, &ctr_iv);
+    let c = Ctr128::<Kuznyechik>::new(&key, &ctr_iv);
     test_stream_cipher(c, &pt, &ctr_ct);
 
-    type EcbCipher = Ecb<Kuznyechik, ZeroPadding>;
-    let cipher = Kuznyechik::new(&key);
-    let buf = EcbCipher::new(cipher, &Default::default()).encrypt_vec(&pt);
-    assert_eq!(buf, &ecb_ct[..]);
-    let buf = EcbCipher::new(cipher, &Default::default())
-        .decrypt_vec(&ecb_ct)
-        .unwrap();
-    assert_eq!(buf, &pt[..]);
+    let mut buf = pt;
+    CbcEncrypt::<Kuznyechik, U2>::new_from_slices(&key, &iv)
+        .unwrap()
+        .encrypt_blocks_mut(as_blocks_mut(&mut buf), |_| {});
+    assert_eq!(buf, cbc_ct);
+    CbcDecrypt::<Kuznyechik, U2>::new_from_slices(&key, &iv)
+        .unwrap()
+        .decrypt_blocks_mut(as_blocks_mut(&mut buf), |_| {});
+    assert_eq!(buf, pt);
 
-    type CbcCipher = GostCbc<Kuznyechik, ZeroPadding, U2>;
-    let cipher = Kuznyechik::new(&key);
-    let buf = CbcCipher::new(cipher, &iv).encrypt_vec(&pt);
-    assert_eq!(buf, &cbc_ct[..]);
-    let buf = CbcCipher::new(cipher, &iv).decrypt_vec(&cbc_ct).unwrap();
-    assert_eq!(buf, &pt[..]);
+    // ECB mode tests
+    let mut buf = pt;
+    Kuznyechik::new_from_slice(&key)
+        .unwrap()
+        .encrypt_blocks(as_blocks_mut(&mut buf), |_| {});
+    assert_eq!(buf, ecb_ct);
+    Kuznyechik::new_from_slice(&key)
+        .unwrap()
+        .decrypt_blocks(as_blocks_mut(&mut buf), |_| {});
+    assert_eq!(buf, pt);
 }
 
 #[test]
@@ -145,12 +149,8 @@ fn magma_modes() {
     let iv = GenericArray::from_slice(&hex!("
         1234567890abcdef234567890abcdef1
     "));
-    let ctr_iv = GenericArray::from_slice(&hex!("
-        12345678
-    "));
-    let cbc_iv = GenericArray::from_slice(&hex!("
-        1234567890abcdef234567890abcdef134567890abcdef12
-    "));
+    let ctr_iv = hex!("12345678");
+    let cbc_iv = hex!("1234567890abcdef234567890abcdef134567890abcdef12");
     let pt = hex!("
         92def06b3c130a59db54c704f8189d20
         4a98fb2e67a8024c8912409b17b57e41
@@ -176,31 +176,37 @@ fn magma_modes() {
         24bdd2035315d38bbcc0321421075505
     ");
 
-    let c = GostOfb::<Magma, U2>::new(&key, &iv);
+    let c = Ofb::<Magma, U2>::new(&key, &iv);
     test_stream_cipher(c, &pt, &ofb_ct);
 
-    let c = GostCfb::<Magma, U16>::new(&key, &iv);
+    let c = Cfb::<Magma, U16>::new(&key, &iv);
     test_async_stream_cipher(c, &pt, &cfb_ct);
 
-    let c = GostCtr64::<Magma>::new(&key, &ctr_iv);
+    let c = Ctr64::<Magma>::new_from_slices(&key, &ctr_iv).unwrap();
     test_stream_cipher(c, &pt, &ctr_ct);
 
-    type EcbCipher = Ecb<Magma, ZeroPadding>;
-    let cipher = Magma::new(&key);
-    let buf = EcbCipher::new(cipher, &Default::default()).encrypt_vec(&pt);
-    assert_eq!(buf, &ecb_ct[..]);
-    let buf = EcbCipher::new(cipher, &Default::default())
-        .decrypt_vec(&ecb_ct)
-        .unwrap();
-    assert_eq!(buf, &pt[..]);
+    // CBC mode tests
+    let mut buf = pt;
+    CbcEncrypt::<Magma, U3>::new_from_slices(&key, &cbc_iv)
+        .unwrap()
+        .encrypt_blocks_mut(as_blocks_mut(&mut buf), |_| {});
+    assert_eq!(buf, cbc_ct);
+    CbcDecrypt::<Magma, U3>::new_from_slices(&key, &cbc_iv)
+        .unwrap()
+        .decrypt_blocks_mut(as_blocks_mut(&mut buf), |_| {});
+    assert_eq!(buf, pt);
 
-    type CbcCipher = GostCbc<Magma, ZeroPadding, U3>;
-    let cipher = Magma::new(&key);
-    let buf = CbcCipher::new(cipher, &cbc_iv).encrypt_vec(&pt);
-    assert_eq!(buf, &cbc_ct[..]);
-    let buf = CbcCipher::new(cipher, &cbc_iv).decrypt_vec(&cbc_ct).unwrap();
-    assert_eq!(buf, &pt[..]);
+    // ECB mode tests
+    let mut buf = pt;
+    Magma::new_from_slice(&key)
+        .unwrap()
+        .encrypt_blocks(as_blocks_mut(&mut buf), |_| {});
+    assert_eq!(buf, ecb_ct);
+    Magma::new_from_slice(&key)
+        .unwrap()
+        .decrypt_blocks(as_blocks_mut(&mut buf), |_| {});
+    assert_eq!(buf, pt);
 }
 
-cipher::stream_cipher_seek_test!(kuznyechik_ctr_seek, GostCtr128::<Kuznyechik, U14>);
-cipher::stream_cipher_seek_test!(magma_ctr_seek, GostCtr64::<Magma, U5>);
+cipher::stream_cipher_seek_test!(kuznyechik_ctr_seek, Ctr128::<Kuznyechik, U14>);
+cipher::stream_cipher_seek_test!(magma_ctr_seek, Ctr64::<Magma, U5>);

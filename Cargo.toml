@@ -2,7 +2,6 @@
 members = [
     "aes",
     "blowfish",
-    #"gost-modes",
     "cast5",
     "des",
     "idea",
@@ -12,6 +11,7 @@ members = [
     "modes/cfb8",
     "modes/cfb-mode",
     "modes/ctr",
+    "modes/gost-modes",
     "modes/ige",
     "modes/ofb",
     "modes/pcbc",
