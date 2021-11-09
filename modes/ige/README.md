@@ -7,10 +7,10 @@
 [![Project Chat][chat-image]][chat-link]
 [![Build Status][build-image]][build-link]
 
-Generic implementation of the [Infinite Garble Extension][IGE] (IGE) block cipher mode
-of operation.
+Generic implementation of the [Infinite Garble Extension][IGE] (IGE)
+block cipher mode of operation.
 
-<img src="https://raw.githubusercontent.com/RustCrypto/meta/master/img/block-ciphers/modes/ige_enc.svg" width="50%"><img src="https://raw.githubusercontent.com/RustCrypto/meta/master/img/block-ciphers/modes/ige_dec.svg" width="50%">
+<img src="https://raw.githubusercontent.com/RustCrypto/media/master/img/block-ciphers/modes/ige_enc.svg" width="50%"><img src="https://raw.githubusercontent.com/RustCrypto/media/master/img/block-ciphers/modes/ige_dec.svg" width="50%">
 
 See [documentation][cipher-doc] of the `cipher` crate for additional information.
 

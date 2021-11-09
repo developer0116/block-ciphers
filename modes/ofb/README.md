@@ -10,7 +10,7 @@
 Generic implementation of the [Output Feedback][OFB] (OFB) block cipher mode
 of operation.
 
-<img src="https://raw.githubusercontent.com/RustCrypto/meta/master/img/block-ciphers/modes/ofb_enc.svg" width="50%"><img src="https://raw.githubusercontent.com/RustCrypto/meta/master/img/block-ciphers/modes/ofb_dec.svg" width="50%">
+<img src="https://raw.githubusercontent.com/RustCrypto/media/master/img/block-ciphers/modes/ofb_enc.svg" width="50%"><img src="https://raw.githubusercontent.com/RustCrypto/media/master/img/block-ciphers/modes/ofb_dec.svg" width="50%">
 
 See [documentation][cipher-doc] of the `cipher` crate for additional information.
 

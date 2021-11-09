@@ -10,7 +10,7 @@
 Generic implementation of the [Propagating Cipher Block Chaining][PCBC] (PCBC)
 block cipher mode of operation.
 
-<img src="https://raw.githubusercontent.com/RustCrypto/meta/master/img/block-ciphers/modes/pcbc_enc.svg" width="50%"><img src="https://raw.githubusercontent.com/RustCrypto/meta/master/img/block-ciphers/modes/pcbc_dec.svg" width="50%">
+<img src="https://raw.githubusercontent.com/RustCrypto/media/master/img/block-ciphers/modes/pcbc_enc.svg" width="50%"><img src="https://raw.githubusercontent.com/RustCrypto/media/master/img/block-ciphers/modes/pcbc_dec.svg" width="50%">
 
 See [documentation][cipher-doc] of the `cipher` crate for additional information.
 
