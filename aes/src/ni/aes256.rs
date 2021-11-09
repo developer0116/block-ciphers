@@ -157,6 +157,8 @@ macro_rules! expand_round_last {
 
 #[inline(always)]
 pub(super) unsafe fn expand(key: &[u8; 32]) -> (RoundKeys, RoundKeys) {
+    // SAFETY: `RoundKeys` is a `[__m128i; 15]` which can be initialized
+    // with all zeroes.
     let mut enc_keys: RoundKeys = mem::zeroed();
     let mut dec_keys: RoundKeys = mem::zeroed();
 

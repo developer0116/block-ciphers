@@ -124,6 +124,8 @@ macro_rules! shuffle {
 #[inline]
 #[target_feature(enable = "aes")]
 pub(super) unsafe fn expand(key: &[u8; 24]) -> (RoundKeys, RoundKeys) {
+    // SAFETY: `RoundKeys` is a `[__m128i; 13]` which can be initialized
+    // with all zeroes.
     let mut enc_keys: RoundKeys = mem::zeroed();
     let mut dec_keys: RoundKeys = mem::zeroed();
 
