@@ -2,12 +2,12 @@
 
 #![allow(clippy::unreadable_literal)]
 
-use byteorder::{ByteOrder, BE};
 use cipher::{
-    consts::{U1, U8},
-    generic_array::GenericArray,
-    BlockCipher, BlockDecrypt, BlockEncrypt, NewBlockCipher,
+    consts::U8,
+    inout::InOut,
+    BlockCipher, Block, BlockDecrypt, BlockEncrypt, KeyInit, KeySizeUser, BlockSizeUser, Key,
 };
+use core::fmt;
 
 use crate::consts::{SBOXES, SHIFTS};
 
@@ -186,33 +186,42 @@ impl Des {
     }
 }
 
-impl NewBlockCipher for Des {
-    type KeySize = U8;
 
-    fn new(key: &GenericArray<u8, U8>) -> Self {
-        Des {
-            keys: gen_keys(BE::read_u64(key)),
-        }
+impl KeySizeUser for Des {
+    type KeySize = U8;
+}
+
+impl KeyInit for Des {
+    fn new(key: &Key<Self>) -> Self {
+        let keys = gen_keys(u64::from_be_bytes(key.clone().into()));
+        Self { keys }
     }
 }
 
-impl BlockCipher for Des {
+impl BlockSizeUser for Des {
     type BlockSize = U8;
-    type ParBlocks = U1;
 }
 
+impl BlockCipher for Des { }
+
 impl BlockEncrypt for Des {
-    fn encrypt_block(&self, block: &mut GenericArray<u8, U8>) {
-        let data = BE::read_u64(block);
-        BE::write_u64(block, self.encrypt(data));
+    fn encrypt_block_inout(&self, block: InOut<'_, Block<Self>>) {
+        let mut data = u64::from_be_bytes(block.get_in().clone().into());
+        data = self.encrypt(data);
+        block.get_out().copy_from_slice(&data.to_be_bytes());
     }
 }
 
 impl BlockDecrypt for Des {
-    fn decrypt_block(&self, block: &mut GenericArray<u8, U8>) {
-        let data = BE::read_u64(block);
-        BE::write_u64(block, self.decrypt(data));
+    fn decrypt_block_inout(&self, block: InOut<'_, Block<Self>>) {
+        let mut data = u64::from_be_bytes(block.get_in().clone().into());
+        data = self.decrypt(data);
+        block.get_out().copy_from_slice(&data.to_be_bytes());
     }
 }
 
-opaque_debug::implement!(Des);
+impl fmt::Debug for Des {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str("Des { ... }")
+    }
+}

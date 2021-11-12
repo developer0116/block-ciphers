@@ -109,9 +109,7 @@ dependencies = [
 name = "des"
 version = "0.8.0"
 dependencies = [
- "byteorder",
- "cipher 0.3.0",
- "opaque-debug",
+ "cipher 0.4.0",
 ]
 
 [[package]]
