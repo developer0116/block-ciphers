@@ -37,7 +37,7 @@ dependencies = [
 
 [[package]]
 name = "blowfish"
-version = "0.8.0"
+version = "0.9.0"
 dependencies = [
  "byteorder",
  "cipher 0.3.0",
@@ -52,7 +52,7 @@ checksum = "14c189c53d098945499cdfa7ecc63567cf3886b3332b312a5b4585d8d3a6a610"
 
 [[package]]
 name = "cast5"
-version = "0.10.0"
+version = "0.11.0"
 dependencies = [
  "byteorder",
  "cipher 0.3.0",
@@ -107,7 +107,7 @@ dependencies = [
 
 [[package]]
 name = "des"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "byteorder",
  "cipher 0.3.0",
@@ -145,7 +145,7 @@ dependencies = [
 
 [[package]]
 name = "idea"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "cipher 0.3.0",
  "opaque-debug",
@@ -195,7 +195,7 @@ checksum = "dbf0c48bc1d91375ae5c3cd81e3722dff1abcf81a30960240640d223f59fe0e5"
 
 [[package]]
 name = "rc2"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "cipher 0.3.0",
  "opaque-debug",
@@ -203,7 +203,7 @@ dependencies = [
 
 [[package]]
 name = "serpent"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "byteorder",
  "cipher 0.3.0",
@@ -212,7 +212,7 @@ dependencies = [
 
 [[package]]
 name = "sm4"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "byteorder",
  "cipher 0.3.0",
@@ -222,14 +222,14 @@ dependencies = [
 
 [[package]]
 name = "threefish"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "cipher 0.3.0",
 ]
 
 [[package]]
 name = "twofish"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "byteorder",
  "cipher 0.3.0",
