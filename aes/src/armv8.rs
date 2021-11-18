@@ -29,6 +29,7 @@ use cipher::{
     BlockCipher, BlockDecrypt, BlockEncrypt, NewBlockCipher,
 };
 use core::arch::aarch64::*;
+use core::fmt;
 
 macro_rules! define_aes_impl {
     (
