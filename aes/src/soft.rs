@@ -15,6 +15,7 @@ pub(crate) mod fixslice;
 use crate::Block;
 use cipher::{
     consts::{U16, U24, U32},
+    crypto_common::AlgorithmName,
     generic_array::GenericArray,
     inout::{InOut, InOutBuf, InSrc, InTmpOutBuf},
     BlockCipher, BlockDecrypt, BlockEncrypt, BlockSizeUser, KeyInit, KeySizeUser,
@@ -121,6 +122,12 @@ macro_rules! define_aes_impl {
         impl fmt::Debug for $name {
             fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
                 f.write_str(concat!(stringify!($name), " { .. }"))
+            }
+        }
+
+        impl AlgorithmName for $name {
+            fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                f.write_str(stringify!($name))
             }
         }
     };
