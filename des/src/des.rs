@@ -3,9 +3,8 @@
 #![allow(clippy::unreadable_literal)]
 
 use cipher::{
-    consts::U8,
-    inout::InOut,
-    BlockCipher, Block, BlockDecrypt, BlockEncrypt, KeyInit, KeySizeUser, BlockSizeUser, Key,
+    consts::U8, inout::InOut, Block, BlockCipher, BlockDecrypt, BlockEncrypt, BlockSizeUser, Key,
+    KeyInit, KeySizeUser,
 };
 use core::fmt;
 
@@ -186,7 +185,6 @@ impl Des {
     }
 }
 
-
 impl KeySizeUser for Des {
     type KeySize = U8;
 }
@@ -202,7 +200,7 @@ impl BlockSizeUser for Des {
     type BlockSize = U8;
 }
 
-impl BlockCipher for Des { }
+impl BlockCipher for Des {}
 
 impl BlockEncrypt for Des {
     fn encrypt_block_inout(&self, block: InOut<'_, Block<Self>>) {

@@ -4,9 +4,9 @@ use crate::des::{gen_keys, Des};
 use cipher::{
     consts::{U16, U24, U8},
     inout::InOut,
-    BlockCipher, Block, BlockDecrypt, BlockEncrypt, KeyInit, KeySizeUser, BlockSizeUser, Key,
+    Block, BlockCipher, BlockDecrypt, BlockEncrypt, BlockSizeUser, Key, KeyInit, KeySizeUser,
 };
-use core::{fmt, convert::TryInto};
+use core::{convert::TryInto, fmt};
 
 /// Triple DES (3DES) block cipher.
 #[derive(Copy, Clone)]
@@ -29,15 +29,9 @@ impl KeyInit for TdesEde3 {
         let k1 = u64::from_be_bytes(key[0..8].try_into().unwrap());
         let k2 = u64::from_be_bytes(key[8..16].try_into().unwrap());
         let k3 = u64::from_be_bytes(key[16..24].try_into().unwrap());
-        let d1 = Des {
-            keys: gen_keys(k1),
-        };
-        let d2 = Des {
-            keys: gen_keys(k2),
-        };
-        let d3 = Des {
-            keys: gen_keys(k3),
-        };
+        let d1 = Des { keys: gen_keys(k1) };
+        let d2 = Des { keys: gen_keys(k2) };
+        let d3 = Des { keys: gen_keys(k3) };
         Self { d1, d2, d3 }
     }
 }
@@ -74,7 +68,6 @@ impl fmt::Debug for TdesEde3 {
     }
 }
 
-
 /// Triple DES (3DES) block cipher.
 #[derive(Copy, Clone)]
 pub struct TdesEee3 {
@@ -92,15 +85,9 @@ impl KeyInit for TdesEee3 {
         let k1 = u64::from_be_bytes(key[0..8].try_into().unwrap());
         let k2 = u64::from_be_bytes(key[8..16].try_into().unwrap());
         let k3 = u64::from_be_bytes(key[16..24].try_into().unwrap());
-        let d1 = Des {
-            keys: gen_keys(k1),
-        };
-        let d2 = Des {
-            keys: gen_keys(k2),
-        };
-        let d3 = Des {
-            keys: gen_keys(k3),
-        };
+        let d1 = Des { keys: gen_keys(k1) };
+        let d2 = Des { keys: gen_keys(k2) };
+        let d3 = Des { keys: gen_keys(k3) };
         Self { d1, d2, d3 }
     }
 }
@@ -141,8 +128,6 @@ impl fmt::Debug for TdesEee3 {
     }
 }
 
-
-
 /// Triple DES (3DES) block cipher.
 #[derive(Copy, Clone)]
 pub struct TdesEde2 {
@@ -158,12 +143,8 @@ impl KeyInit for TdesEde2 {
     fn new(key: &Key<Self>) -> Self {
         let k1 = u64::from_be_bytes(key[0..8].try_into().unwrap());
         let k2 = u64::from_be_bytes(key[8..16].try_into().unwrap());
-        let d1 = Des {
-            keys: gen_keys(k1),
-        };
-        let d2 = Des {
-            keys: gen_keys(k2),
-        };
+        let d1 = Des { keys: gen_keys(k1) };
+        let d2 = Des { keys: gen_keys(k2) };
         Self { d1, d2 }
     }
 }
@@ -204,9 +185,6 @@ impl fmt::Debug for TdesEde2 {
     }
 }
 
-
-
-
 /// Triple DES (3DES) block cipher.
 #[derive(Copy, Clone)]
 pub struct TdesEee2 {
@@ -222,12 +200,8 @@ impl KeyInit for TdesEee2 {
     fn new(key: &Key<Self>) -> Self {
         let k1 = u64::from_be_bytes(key[0..8].try_into().unwrap());
         let k2 = u64::from_be_bytes(key[8..16].try_into().unwrap());
-        let d1 = Des {
-            keys: gen_keys(k1),
-        };
-        let d2 = Des {
-            keys: gen_keys(k2),
-        };
+        let d1 = Des { keys: gen_keys(k1) };
+        let d2 = Des { keys: gen_keys(k2) };
         Self { d1, d2 }
     }
 }
