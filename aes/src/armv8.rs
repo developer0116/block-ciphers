@@ -24,6 +24,7 @@ use self::{
 use crate::{Block, ParBlocks};
 use cipher::{
     consts::{U16, U24, U32, U8},
+    crypto_common::AlgorithmName,
     generic_array::GenericArray,
     BlockCipher, BlockDecrypt, BlockEncrypt, NewBlockCipher,
 };
@@ -86,6 +87,18 @@ macro_rules! define_aes_impl {
             }
         }
 
+        impl fmt::Debug for $name {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+                f.write_str(concat!(stringify!($name), " { .. }"))
+            }
+        }
+
+        impl AlgorithmName for $name {
+            fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                f.write_str(stringify!($name))
+            }
+        }
+
         #[doc=$doc]
         #[doc = "block cipher (encrypt-only)"]
         #[derive(Clone)]
@@ -115,6 +128,18 @@ macro_rules! define_aes_impl {
 
             fn encrypt_par_blocks(&self, blocks: &mut ParBlocks) {
                 unsafe { encrypt8(&self.round_keys, blocks) }
+            }
+        }
+
+        impl fmt::Debug for $name_enc {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+                f.write_str(concat!(stringify!($name_enc), " { .. }"))
+            }
+        }
+
+        impl AlgorithmName for $name_enc {
+            fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                f.write_str(stringify!($name_enc))
             }
         }
 
@@ -162,9 +187,17 @@ macro_rules! define_aes_impl {
             }
         }
 
-        opaque_debug::implement!($name);
-        opaque_debug::implement!($name_enc);
-        opaque_debug::implement!($name_dec);
+        impl fmt::Debug for $name_dec {
+            fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+                f.write_str(concat!(stringify!($name_dec), " { .. }"))
+            }
+        }
+
+        impl AlgorithmName for $name_dec {
+            fn write_alg_name(f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                f.write_str(stringify!($name_dec))
+            }
+        }
     };
 }
 
